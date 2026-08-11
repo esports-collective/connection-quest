@@ -55,8 +55,13 @@ export default async function SchedulePage() {
     for (const q of (data as QuestLite[]) ?? []) questById.set(q.id, q);
   }
 
+  // Weekly quests always show; once-off quests only until their date passes.
+  const today = new Date().toISOString().slice(0, 10);
   const linksBySession = new Map<string, SessionQuest[]>();
   for (const l of links) {
+    if (l.recurrence === "once" && l.scheduled_date && l.scheduled_date < today) {
+      continue;
+    }
     const arr = linksBySession.get(l.session_id) ?? [];
     arr.push(l);
     linksBySession.set(l.session_id, arr);
@@ -153,7 +158,16 @@ export default async function SchedulePage() {
                                     {l.recurrence === "weekly" ? (
                                       <Pill color="#6c3fc5">Weekly</Pill>
                                     ) : (
-                                      <Pill color="#c07c14">Once</Pill>
+                                      <Pill color="#c07c14">
+                                        {l.scheduled_date
+                                          ? `Once · ${new Date(
+                                              l.scheduled_date + "T00:00:00",
+                                            ).toLocaleDateString(undefined, {
+                                              day: "numeric",
+                                              month: "short",
+                                            })}`
+                                          : "Once"}
+                                      </Pill>
                                     )}
                                   </Link>
                                 </li>

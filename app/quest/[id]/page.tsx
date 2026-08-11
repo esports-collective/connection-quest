@@ -7,8 +7,9 @@ import { CATEGORY_META, DIFFICULTY_LABEL, xpRange } from "@/lib/gamification";
 import TopBar from "@/components/TopBar";
 import Footer from "@/components/Footer";
 import YesNoFlow from "@/components/YesNoFlow";
+import AddToSchedule from "@/components/AddToSchedule";
 import { Pill } from "@/components/ui";
-import type { Quest } from "@/lib/types";
+import type { Quest, ScheduleSession, SessionQuest } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,36 @@ export default async function QuestDetail({
   if (!quest) notFound();
 
   const meta = CATEGORY_META[quest.category] ?? { emoji: "✨", color: "#3a1d6e" };
+
+  // The participant's sessions + any existing links for this quest, so they can
+  // plan the quest into their schedule (once-off or weekly).
+  const { data: sessionsData } = await supabase
+    .from("schedule_sessions")
+    .select("id, weekday, starts_at, ends_at")
+    .eq("participant_id", profile.id)
+    .eq("is_active", true)
+    .order("weekday")
+    .order("starts_at");
+  const sessions = (sessionsData as Pick<
+    ScheduleSession,
+    "id" | "weekday" | "starts_at" | "ends_at"
+  >[]) ?? [];
+
+  let scheduleLinks: Pick<
+    SessionQuest,
+    "id" | "session_id" | "recurrence" | "scheduled_date"
+  >[] = [];
+  if (sessions.length) {
+    const { data } = await supabase
+      .from("session_quests")
+      .select("id, session_id, recurrence, scheduled_date")
+      .eq("quest_id", quest.id)
+      .in(
+        "session_id",
+        sessions.map((s) => s.id),
+      );
+    scheduleLinks = data ?? [];
+  }
 
   return (
     <>
@@ -118,6 +149,16 @@ export default async function QuestDetail({
             )}
           </div>
         </div>
+
+        {sessions.length > 0 && (
+          <div className="mt-6">
+            <AddToSchedule
+              questId={quest.id}
+              sessions={sessions}
+              initialLinks={scheduleLinks}
+            />
+          </div>
+        )}
 
         <div className="mt-6">
           <YesNoFlow

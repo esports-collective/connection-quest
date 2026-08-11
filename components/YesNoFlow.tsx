@@ -7,6 +7,7 @@ import { DURATION_OPTIONS } from "@/lib/gamification";
 import type { YNQuestion } from "@/lib/types";
 
 type Phase =
+  | "start"
   | "intro"
   | number
   | "duration"
@@ -37,7 +38,7 @@ export default function YesNoFlow({
   questions: YNQuestion[];
 }) {
   const router = useRouter();
-  const [phase, setPhase] = useState<Phase>("intro");
+  const [phase, setPhase] = useState<Phase>("start");
   const [chosen, setChosen] = useState(true);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [duration, setDuration] = useState<number | null>(null);
@@ -92,16 +93,34 @@ export default function YesNoFlow({
     setFeedback((f) => (f ? `${f}, ${chip}` : chip));
   }
 
-  if (phase === "intro") {
+  if (phase === "start") {
     return (
       <div className="card p-6 text-center">
         <p className="text-lg font-semibold text-[var(--brand-purple-deep)]">
           Did you do this quest?
         </p>
         <p className="mt-1 text-sm text-[var(--ink-soft)]">
-          Answer a few quick questions to log it and earn XP.
+          Mark it complete to answer a few quick questions and earn XP.
         </p>
-        <p className="mt-5 mb-2 font-semibold">Whose idea was it?</p>
+        <button
+          onClick={() => setPhase("intro")}
+          className={`${buttonClass("cyan", "lg")} mt-5 w-full`}
+        >
+          ✅ Mark as complete
+        </button>
+      </div>
+    );
+  }
+
+  if (phase === "intro") {
+    return (
+      <div className="card p-6 text-center">
+        <p className="text-lg font-semibold text-[var(--brand-purple-deep)]">
+          Whose idea was it?
+        </p>
+        <p className="mt-1 mb-4 text-sm text-[var(--ink-soft)]">
+          This helps us record how you like to choose your quests.
+        </p>
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => {
