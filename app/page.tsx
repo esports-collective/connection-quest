@@ -3,6 +3,7 @@ import { getSessionProfile } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { getParticipantGoals } from "@/lib/goals/provider";
 import { recommendQuests } from "@/lib/ai/jobs";
+import { STAFF_APP_URL } from "@/lib/constants";
 import { levelInfo, computeStreak, CATEGORIES } from "@/lib/gamification";
 import TopBar from "@/components/TopBar";
 import QuestCard from "@/components/QuestCard";
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");
-  if (profile.role !== "participant") redirect("/staff");
+  if (profile.role !== "participant") redirect(STAFF_APP_URL);
 
   const supabase = await createClient();
   const [{ data: questsData }, { data: completionsData }] = await Promise.all([

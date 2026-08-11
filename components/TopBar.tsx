@@ -5,17 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Role } from "@/lib/types";
 
-const participantNav = [
+// This is the participant app (quests.esportscollective.com.au). Staff and
+// admin navigation lives in the separate staff app.
+const nav = [
   { href: "/", label: "Quests" },
   { href: "/me", label: "My Progress" },
   { href: "/log", label: "Log Activity" },
-];
-
-const staffNav = [
-  { href: "/staff", label: "Floor" },
-  { href: "/admin/participants", label: "People" },
-  { href: "/staff/notes", label: "Notes" },
-  { href: "/admin/quests", label: "Library" },
 ];
 
 export default function TopBar({
@@ -28,7 +23,6 @@ export default function TopBar({
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
-  const nav = role === "participant" ? participantNav : staffNav;
 
   async function signOut() {
     await supabase.auth.signOut();

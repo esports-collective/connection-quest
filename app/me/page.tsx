@@ -8,6 +8,7 @@ import {
   computeBadges,
   CATEGORY_META,
 } from "@/lib/gamification";
+import { STAFF_APP_URL } from "@/lib/constants";
 import TopBar from "@/components/TopBar";
 import { ProgressBar, SectionTitle, Card } from "@/components/ui";
 import type { CompletionWithQuest } from "@/lib/types";
@@ -17,7 +18,7 @@ export const dynamic = "force-dynamic";
 export default async function MePage() {
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");
-  if (profile.role !== "participant") redirect("/staff");
+  if (profile.role !== "participant") redirect(STAFF_APP_URL);
 
   const supabase = await createClient();
   const { data } = await supabase

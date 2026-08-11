@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionProfile } from "@/lib/session";
+import { STAFF_APP_URL } from "@/lib/constants";
 import TopBar from "@/components/TopBar";
 import LogForm from "@/components/LogForm";
 import { SectionTitle } from "@/components/ui";
@@ -9,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function LogPage() {
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");
-  if (profile.role !== "participant") redirect("/staff");
+  if (profile.role !== "participant") redirect(STAFF_APP_URL);
 
   return (
     <>

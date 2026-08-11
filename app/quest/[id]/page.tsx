@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getSessionProfile } from "@/lib/session";
+import { STAFF_APP_URL } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORY_META, DIFFICULTY_LABEL, xpRange } from "@/lib/gamification";
 import TopBar from "@/components/TopBar";
@@ -18,6 +19,7 @@ export default async function QuestDetail({
   const { id } = await params;
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");
+  if (profile.role !== "participant") redirect(STAFF_APP_URL);
 
   const supabase = await createClient();
   const { data } = await supabase.from("quests").select("*").eq("id", id).single();
@@ -116,21 +118,14 @@ export default async function QuestDetail({
           </div>
         </div>
 
-        {profile.role === "participant" ? (
-          <div className="mt-6">
-            <YesNoFlow
-              questId={quest.id}
-              title={quest.title}
-              xp={quest.xp}
-              questions={quest.yn_questions}
-            />
-          </div>
-        ) : (
-          <p className="mt-6 rounded-2xl bg-[var(--brand-purple-soft)] p-4 text-sm text-[var(--brand-purple-deep)]">
-            You&apos;re viewing this as staff. Log this quest for a participant
-            from the <Link href="/staff" className="underline">Floor</Link>.
-          </p>
-        )}
+        <div className="mt-6">
+          <YesNoFlow
+            questId={quest.id}
+            title={quest.title}
+            xp={quest.xp}
+            questions={quest.yn_questions}
+          />
+        </div>
       </main>
     </>
   );
