@@ -1,4 +1,4 @@
--- Seed the 19-quest starter library. Idempotent on `code`.
+-- Seed the 20-quest starter library. Idempotent on `code`.
 insert into public.quests
   (code,title,category,style,type,difficulty,est_minutes,location,description,skills_built,capacities,xp,yn_questions)
 values
@@ -95,6 +95,11 @@ values
 ('Q019','Photo Walk','Creative / Fun','open','Solo','starter',30,'Community',
  'Head out and take photos of things that catch your eye. Share a favourite.',
  array['Creativity','Observation'], array['Self-expression','Initiative'], 10,
- '[{"prompt":"Did you take some photos?","is_capacity":false},{"prompt":"Did you take one you liked?","is_capacity":true},{"prompt":"Did you enjoy it?","is_capacity":false},{"prompt":"Would you do it again?","is_capacity":false}]'::jsonb)
+ '[{"prompt":"Did you take some photos?","is_capacity":false},{"prompt":"Did you take one you liked?","is_capacity":true},{"prompt":"Did you enjoy it?","is_capacity":false},{"prompt":"Would you do it again?","is_capacity":false}]'::jsonb),
+
+('Q020','Work Experience @ ESports Collective','Life Skills','structured','Solo with support','regular',180,'Hub',
+ 'Join the crew for a work experience shift at the ESports Collective hub. Runs 3–6pm on weekdays. Help set up, run activities, and pitch in on real tasks alongside the team.',
+ array['Work skills','Teamwork','Responsibility'], array['Initiative','Responsibility','Communication'], 25,
+ '[{"prompt":"Did you turn up for your shift?","is_capacity":false},{"prompt":"Did you take on your tasks yourself?","is_capacity":true},{"prompt":"Did you enjoy the work?","is_capacity":false},{"prompt":"Would you do another shift?","is_capacity":false}]'::jsonb)
 
 on conflict (code) do nothing;
