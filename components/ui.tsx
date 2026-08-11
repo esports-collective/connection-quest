@@ -7,8 +7,9 @@ const buttonBase =
   "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none";
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: "bg-[var(--brand-purple)] text-white hover:bg-[var(--brand-purple-deep)]",
-  cyan: "bg-[var(--brand-cyan)] text-[#053b40] hover:brightness-95",
+  primary:
+    "bg-[var(--brand-violet)] text-white shadow-sm shadow-[var(--brand-violet)]/30 hover:bg-[var(--brand-purple)]",
+  cyan: "bg-[var(--brand-cyan)] text-[var(--brand-purple-deep)] hover:brightness-95",
   secondary:
     "bg-[var(--brand-purple-soft)] text-[var(--brand-purple-deep)] hover:brightness-95",
   ghost: "bg-transparent text-[var(--brand-purple-deep)] hover:bg-[var(--brand-purple-soft)]",
