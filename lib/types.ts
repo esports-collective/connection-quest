@@ -47,6 +47,27 @@ export interface Quest {
   is_active: boolean;
 }
 
+export type Recurrence = "once" | "weekly";
+
+export interface ScheduleSession {
+  id: string;
+  participant_id: string;
+  weekday: number; // 1=Mon .. 7=Sun (ISO)
+  starts_at: string; // "HH:MM:SS"
+  ends_at: string; // "HH:MM:SS"
+  has_support: boolean;
+  label: string | null;
+  is_active: boolean;
+}
+
+export interface SessionQuest {
+  id: string;
+  session_id: string;
+  quest_id: string;
+  recurrence: Recurrence;
+  scheduled_date: string | null; // set for once-off, null for weekly
+}
+
 export interface Goal {
   id: string;
   participant_id: string;

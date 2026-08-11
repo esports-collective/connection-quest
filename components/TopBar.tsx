@@ -10,6 +10,7 @@ import type { Role } from "@/lib/types";
 // admin navigation lives in the separate staff app.
 const nav = [
   { href: "/", label: "Quests" },
+  { href: "/schedule", label: "Schedule" },
   { href: "/library", label: "Library" },
   { href: "/me", label: "Progress" },
   { href: "/log", label: "Log" },
