@@ -270,7 +270,7 @@ export default function YesNoFlow({
         Quest complete!
       </h2>
       <p className="mt-1 text-[var(--ink-soft)]">{title}</p>
-      <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--brand-cyan-soft)] px-5 py-2 text-xl font-bold text-[#0a6b74]">
+      <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--brand-cyan-soft)] px-5 py-2 text-xl font-bold text-[var(--brand-cyan-ink)]">
         +{result?.xp ?? xp} XP
       </div>
       {result && result.goals > 0 && (

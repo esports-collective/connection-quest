@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass } from "@/components/ui";
@@ -32,7 +33,9 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
-        shouldCreateUser: true,
+        // Participants are provisioned by staff (staff app → Quest logins /
+        // onboarding), so the login never creates a new account itself.
+        shouldCreateUser: false,
         // Fallback magic-link lands on the callback of whatever origin asked
         // for the code (dev → dev, prod → prod). The typed code is primary.
         emailRedirectTo: `${window.location.origin}/auth/callback`,
@@ -81,14 +84,24 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[var(--brand-purple)] to-[var(--brand-purple-deep)] p-6 text-white">
-      <div className="w-full max-w-sm">
+    <main className="brand-gradient relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-6 text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[var(--brand-cyan)]/15 blur-3xl"
+      />
+      <div className="relative w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mb-2 text-5xl">🗺️</div>
-          <h1 className="font-display text-4xl font-extrabold tracking-tight">
-            Quests
-          </h1>
-          <p className="mt-1 text-white/80">Choose your quest. Level up your life.</p>
+          <Image
+            src="/side-quests-logo.png"
+            alt="Side Quests"
+            width={340}
+            height={274}
+            priority
+            className="mx-auto h-auto w-56 drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+          />
+          <p className="mt-3 text-white/80">
+            Choose your quest. Level up your life.
+          </p>
         </div>
 
         <div className="card p-6 text-[var(--ink)]">

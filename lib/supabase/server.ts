@@ -8,6 +8,9 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // Quests tables live in the `quests` schema of the shared staff-app
+      // Supabase project. Auth still uses the auth schema regardless.
+      db: { schema: "quests" },
       cookies: {
         getAll() {
           return cookieStore.getAll();

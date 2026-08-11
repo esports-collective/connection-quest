@@ -1,11 +1,13 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionProfile } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { getParticipantGoals } from "@/lib/goals/provider";
 import { recommendQuests } from "@/lib/ai/jobs";
 import { STAFF_APP_URL } from "@/lib/constants";
-import { levelInfo, computeStreak, CATEGORIES } from "@/lib/gamification";
+import { levelInfo, computeStreak } from "@/lib/gamification";
 import TopBar from "@/components/TopBar";
+import Footer from "@/components/Footer";
 import QuestCard from "@/components/QuestCard";
 import { ProgressBar, SectionTitle } from "@/components/ui";
 import type { Quest, Completion } from "@/lib/types";
@@ -55,21 +57,29 @@ export default async function Home() {
       <TopBar displayName={profile.display_name} role={profile.role} />
 
       {/* Hero */}
-      <div className="bg-gradient-to-b from-[var(--brand-purple)] to-[var(--brand-purple-deep)] text-white">
-        <div className="mx-auto max-w-2xl px-4 py-6">
-          <p className="text-white/80">Hi {firstName} 👋</p>
-          <div className="mt-1 flex items-end justify-between">
-            <h1 className="font-display text-3xl font-extrabold">
+      <div className="brand-gradient relative overflow-hidden text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--brand-cyan)]/15 blur-3xl"
+        />
+        <div className="relative mx-auto max-w-2xl px-4 py-7">
+          <p className="font-display text-2xl font-extrabold tracking-tight text-[var(--brand-cyan)]">
+            Hi {firstName} <span className="align-middle">👋</span>
+          </p>
+          <div className="mt-3 flex items-end justify-between">
+            <h1 className="font-display text-4xl font-extrabold tracking-tight">
               Level {info.level}
             </h1>
             <div className="text-right text-sm text-white/80">
-              <div className="text-lg font-bold text-white">{totalXp} XP</div>
+              <div className="text-xl font-extrabold text-white">
+                {totalXp} XP
+              </div>
               {streak > 0 && <div>🔥 {streak}-day streak</div>}
             </div>
           </div>
-          <div className="mt-3">
-            <ProgressBar pct={info.pct} />
-            <p className="mt-1 text-xs text-white/70">
+          <div className="mt-4">
+            <ProgressBar pct={info.pct} onDark />
+            <p className="mt-1.5 text-xs text-white/70">
               {info.nextLevelAt !== null
                 ? `${info.nextLevelAt - totalXp} XP to Level ${info.level + 1}`
                 : "Max level — legend!"}
@@ -81,8 +91,8 @@ export default async function Home() {
       <main className="mx-auto max-w-2xl px-4 py-6">
         {/* Recommendations */}
         <section className="mb-8">
-          <SectionTitle>Quests for you</SectionTitle>
-          <p className="mb-4 -mt-2 text-sm text-[var(--ink-soft)]">
+          <SectionTitle kicker="Picked for you">Quests for you</SectionTitle>
+          <p className="mb-4 -mt-2 text-sm text-[var(--on-dark-soft)]">
             Picked for you — but the whole library is yours to explore.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -92,29 +102,31 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Browse all by category */}
+        {/* Explore the full library */}
         <section>
-          <SectionTitle>All quests</SectionTitle>
-          <div className="space-y-8">
-            {CATEGORIES.map((cat) => {
-              const inCat = quests.filter((q) => q.category === cat);
-              if (inCat.length === 0) return null;
-              return (
-                <div key={cat}>
-                  <h3 className="mb-3 font-display text-lg font-bold text-[var(--brand-purple-deep)]">
-                    {cat}
-                  </h3>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {inCat.map((q) => (
-                      <QuestCard key={q.id} quest={q} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <Link
+            href="/library"
+            className="card group flex items-center gap-4 p-5 transition duration-200 hover:-translate-y-1 hover:ring-2 hover:ring-[var(--brand-cyan)]"
+          >
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--brand-purple-soft)] text-3xl">
+              🧭
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="kicker">Quest library</p>
+              <h3 className="mt-1 font-display text-lg font-bold text-[var(--brand-purple-deep)]">
+                Explore all {quests.length} quests
+              </h3>
+              <p className="text-sm text-[var(--ink-soft)]">
+                Browse by category and find your next adventure.
+              </p>
+            </div>
+            <span className="font-display text-2xl font-black text-[var(--brand-purple)] transition group-hover:translate-x-1">
+              ›
+            </span>
+          </Link>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

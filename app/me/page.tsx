@@ -10,6 +10,7 @@ import {
 } from "@/lib/gamification";
 import { STAFF_APP_URL } from "@/lib/constants";
 import TopBar from "@/components/TopBar";
+import Footer from "@/components/Footer";
 import { ProgressBar, SectionTitle, Card } from "@/components/ui";
 import type { CompletionWithQuest } from "@/lib/types";
 
@@ -81,7 +82,7 @@ export default async function MePage() {
 
         {/* Badges */}
         <section className="mb-8">
-          <SectionTitle>Badges</SectionTitle>
+          <SectionTitle kicker="Achievements">Badges</SectionTitle>
           <div className="grid grid-cols-4 gap-3">
             {badges.map((b) => (
               <div
@@ -90,11 +91,17 @@ export default async function MePage() {
                 className={`flex flex-col items-center rounded-2xl p-3 text-center ${
                   b.earned
                     ? "bg-white shadow-sm"
-                    : "bg-black/[0.03] opacity-50 grayscale"
+                    : "bg-white/5 opacity-60 grayscale"
                 }`}
               >
                 <span className="text-3xl">{b.emoji}</span>
-                <span className="mt-1 text-[11px] font-semibold leading-tight text-[var(--brand-purple-deep)]">
+                <span
+                  className={`mt-1 text-[11px] font-semibold leading-tight ${
+                    b.earned
+                      ? "text-[var(--brand-purple-deep)]"
+                      : "text-[var(--on-dark-soft)]"
+                  }`}
+                >
                   {b.label}
                 </span>
               </div>
@@ -105,7 +112,7 @@ export default async function MePage() {
         {/* Goals progress */}
         {goals.length > 0 && (
           <section className="mb-8">
-            <SectionTitle>My goals</SectionTitle>
+            <SectionTitle kicker="What you're working towards">My goals</SectionTitle>
             <div className="space-y-3">
               {goals.map((g) => {
                 const n = goalCounts.get(g.id) ?? 0;
@@ -115,7 +122,7 @@ export default async function MePage() {
                       <p className="font-semibold text-[var(--brand-purple-deep)]">
                         {g.name}
                       </p>
-                      <span className="shrink-0 rounded-full bg-[var(--brand-cyan-soft)] px-3 py-1 text-sm font-bold text-[#0a6b74]">
+                      <span className="shrink-0 rounded-full bg-[var(--brand-cyan-soft)] px-3 py-1 text-sm font-bold text-[var(--brand-cyan-ink)]">
                         {n} quest{n === 1 ? "" : "s"}
                       </span>
                     </div>
@@ -128,7 +135,7 @@ export default async function MePage() {
 
         {/* History */}
         <section>
-          <SectionTitle>Quest history</SectionTitle>
+          <SectionTitle kicker="Everything you've done">Quest history</SectionTitle>
           {completions.length === 0 ? (
             <Card>
               <p className="text-[var(--ink-soft)]">
@@ -173,6 +180,7 @@ export default async function MePage() {
           )}
         </section>
       </main>
+      <Footer />
     </>
   );
 }

@@ -15,7 +15,7 @@ const barlow = Barlow({
 });
 
 export const metadata: Metadata = {
-  title: "Quests — ESports Collective",
+  title: "Side Quests — ESports Collective",
   description: "Choose your quest. Level up your life.",
 };
 

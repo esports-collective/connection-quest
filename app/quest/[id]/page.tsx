@@ -5,6 +5,7 @@ import { STAFF_APP_URL } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORY_META, DIFFICULTY_LABEL, xpRange } from "@/lib/gamification";
 import TopBar from "@/components/TopBar";
+import Footer from "@/components/Footer";
 import YesNoFlow from "@/components/YesNoFlow";
 import { Pill } from "@/components/ui";
 import type { Quest } from "@/lib/types";
@@ -26,7 +27,7 @@ export default async function QuestDetail({
   const quest = data as Quest | null;
   if (!quest) notFound();
 
-  const meta = CATEGORY_META[quest.category] ?? { emoji: "✨", color: "#5a2da8" };
+  const meta = CATEGORY_META[quest.category] ?? { emoji: "✨", color: "#3a1d6e" };
 
   return (
     <>
@@ -34,7 +35,7 @@ export default async function QuestDetail({
       <main className="mx-auto max-w-2xl px-4 py-6">
         <Link
           href="/"
-          className="mb-4 inline-block text-sm font-semibold text-[var(--brand-purple)]"
+          className="mb-4 inline-block text-sm font-semibold text-[var(--brand-cyan)] hover:text-white"
         >
           ← All quests
         </Link>
@@ -47,9 +48,9 @@ export default async function QuestDetail({
             <div className="flex items-center gap-3">
               <span className="text-4xl">{meta.emoji}</span>
               <Pill color={meta.color}>{quest.category}</Pill>
-              {quest.style === "open" && <Pill color="#10bccb">Adaptive</Pill>}
+              {quest.style === "open" && <Pill color="#19d3e0">Adaptive</Pill>}
               {quest.style === "suggestion" && (
-                <Pill color="#10bccb">Suggestion</Pill>
+                <Pill color="#19d3e0">Suggestion</Pill>
               )}
             </div>
           </div>
@@ -60,7 +61,7 @@ export default async function QuestDetail({
             <p className="mt-2 text-lg text-[var(--ink)]">{quest.description}</p>
 
             {quest.style === "suggestion" && (
-              <p className="mt-3 rounded-xl bg-[var(--brand-cyan-soft)] px-3 py-2 text-sm font-medium text-[#0a6b74]">
+              <p className="cyan-callout mt-3 px-3 py-2 text-sm font-medium">
                 💡 Just a suggestion — do it however you like. There&apos;s no
                 right way.
               </p>
@@ -80,7 +81,7 @@ export default async function QuestDetail({
                   📍 {quest.location}
                 </span>
               )}
-              <span className="rounded-full bg-[var(--brand-cyan-soft)] px-3 py-1 text-[#0a6b74]">
+              <span className="rounded-full bg-[var(--brand-cyan-soft)] px-3 py-1 text-[var(--brand-cyan-ink)]">
                 {xpRange(quest.xp).min}–{xpRange(quest.xp).max} XP
               </span>
             </div>
@@ -127,6 +128,7 @@ export default async function QuestDetail({
           />
         </div>
       </main>
+      <Footer />
     </>
   );
 }

@@ -82,9 +82,19 @@ export function Card({
   return <div className={`card p-5 ${className}`}>{children}</div>;
 }
 
-export function ProgressBar({ pct }: { pct: number }) {
+export function ProgressBar({
+  pct,
+  onDark = false,
+}: {
+  pct: number;
+  onDark?: boolean;
+}) {
   return (
-    <div className="h-3 w-full overflow-hidden rounded-full bg-[var(--brand-purple-soft)]">
+    <div
+      className={`h-3 w-full overflow-hidden rounded-full ${
+        onDark ? "bg-white/20" : "bg-[var(--brand-purple-soft)]"
+      }`}
+    >
       <div
         className="h-full rounded-full bg-[var(--brand-cyan)] transition-all"
         style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
@@ -93,18 +103,35 @@ export function ProgressBar({ pct }: { pct: number }) {
   );
 }
 
+export function Kicker({
+  children,
+  onDark = false,
+}: {
+  children: ReactNode;
+  onDark?: boolean;
+}) {
+  return (
+    <span className={`kicker ${onDark ? "kicker-on-dark" : ""}`}>{children}</span>
+  );
+}
+
 export function SectionTitle({
   children,
   right,
+  kicker,
 }: {
   children: ReactNode;
   right?: ReactNode;
+  kicker?: ReactNode;
 }) {
   return (
-    <div className="mb-3 flex items-end justify-between">
-      <h2 className="text-xl font-bold text-[var(--brand-purple-deep)]">
-        {children}
-      </h2>
+    <div className="mb-3 flex items-end justify-between gap-3">
+      <div>
+        {kicker && <Kicker onDark>{kicker}</Kicker>}
+        <h2 className="mt-1 font-display text-xl font-extrabold text-white">
+          {children}
+        </h2>
+      </div>
       {right}
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -9,13 +10,13 @@ import type { Role } from "@/lib/types";
 // admin navigation lives in the separate staff app.
 const nav = [
   { href: "/", label: "Quests" },
-  { href: "/me", label: "My Progress" },
-  { href: "/log", label: "Log Activity" },
+  { href: "/library", label: "Library" },
+  { href: "/me", label: "Progress" },
+  { href: "/log", label: "Log" },
 ];
 
 export default function TopBar({
   displayName,
-  role,
 }: {
   displayName: string;
   role: Role;
@@ -31,42 +32,51 @@ export default function TopBar({
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-black/5 bg-white/85 backdrop-blur">
-      <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🗺️</span>
-          <span className="font-display text-xl font-extrabold text-[var(--brand-purple-deep)]">
-            Quests
-          </span>
+    <header className="brand-gradient sticky top-0 z-20 border-b border-[var(--brand-cyan)]/25 text-white shadow-lg shadow-[var(--brand-purple-deep)]/20">
+      {/* Row 1 — logo + participant name */}
+      <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 pt-3">
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/side-quests-logo.png"
+            alt="Side Quests"
+            width={250}
+            height={202}
+            priority
+            className="h-12 w-auto object-contain"
+          />
         </Link>
-        <nav className="flex items-center gap-1">
-          {nav.map((n) => {
-            const active =
-              n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
-            return (
-              <Link
-                key={n.href}
-                href={n.href}
-                className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-                  active
-                    ? "bg-[var(--brand-purple)] text-white"
-                    : "text-[var(--brand-purple-deep)] hover:bg-[var(--brand-purple-soft)]"
-                }`}
-              >
-                {n.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-      <div className="mx-auto flex max-w-2xl items-center justify-between px-4 pb-2 text-xs text-[var(--ink-soft)]">
-        <span>
-          {displayName} · {role}
+        <span className="h-7 w-px bg-white/20" />
+        <span className="font-display text-xl font-extrabold tracking-tight text-white">
+          {displayName}
         </span>
-        <button onClick={signOut} className="font-semibold hover:text-[var(--brand-purple)]">
+      </div>
+
+      {/* Row 2 — navigation + sign out */}
+      <nav className="mx-auto flex max-w-2xl items-center gap-1 px-4 pb-2 pt-2">
+        {nav.map((n) => {
+          const active =
+            n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
+          return (
+            <Link
+              key={n.href}
+              href={n.href}
+              className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
+                active
+                  ? "bg-[var(--brand-cyan)] text-[var(--brand-purple-deep)]"
+                  : "text-white/75 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              {n.label}
+            </Link>
+          );
+        })}
+        <button
+          onClick={signOut}
+          className="ml-auto rounded-full border border-white/25 px-3 py-1.5 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+        >
           Sign out
         </button>
-      </div>
+      </nav>
     </header>
   );
 }

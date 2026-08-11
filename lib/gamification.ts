@@ -10,14 +10,16 @@ export const CATEGORIES = [
   "Creative / Fun",
 ] as const;
 
+// Brand-cohesive category palette — violet/cyan/indigo anchored, with the
+// logo's gold as the warm accent, so quests read as one ESC family.
 export const CATEGORY_META: Record<string, { emoji: string; color: string }> = {
-  Gaming: { emoji: "🎮", color: "#7c3aed" },
-  "Life Skills": { emoji: "🍳", color: "#0ea5a3" },
-  "Community Access": { emoji: "🚌", color: "#2563eb" },
-  Social: { emoji: "🧑‍🤝‍🧑", color: "#db2777" },
-  "Learning / Quizzes": { emoji: "🧠", color: "#d97706" },
-  "Health & Wellbeing": { emoji: "🌿", color: "#16a34a" },
-  "Creative / Fun": { emoji: "📸", color: "#e11d48" },
+  Gaming: { emoji: "🎮", color: "#6c3fc5" },
+  "Life Skills": { emoji: "🍳", color: "#0f97a4" },
+  "Community Access": { emoji: "🚌", color: "#3f57c0" },
+  Social: { emoji: "🧑‍🤝‍🧑", color: "#a338ac" },
+  "Learning / Quizzes": { emoji: "🧠", color: "#c07c14" },
+  "Health & Wellbeing": { emoji: "🌿", color: "#1f9e6a" },
+  "Creative / Fun": { emoji: "📸", color: "#cf4470" },
 };
 
 export const XP_BY_DIFFICULTY: Record<Difficulty, number> = {
