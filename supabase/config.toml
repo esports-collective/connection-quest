@@ -1,0 +1,30 @@
+# Supabase project config for connection-quest-dev (ref: cdtosagggqqjotcxmufr).
+# Auth email is branded to ESports Collective and points at the dev origin.
+# Push with:  supabase link --project-ref cdtosagggqqjotcxmufr  &&  supabase config push
+project_id = "cdtosagggqqjotcxmufr"
+
+[auth]
+# Where magic links / OTP fallback buttons resolve. Dev origin.
+site_url = "http://localhost:3000"
+# Allow-list of origins a sign-in link is permitted to redirect back to.
+additional_redirect_urls = [
+  "http://localhost:3000",
+  "http://localhost:3000/auth/callback",
+  "https://quests.esportscollective.com.au",
+  "https://quests.esportscollective.com.au/auth/callback",
+]
+
+[auth.email]
+enable_signup = true
+# ~1 hour. The app uses the typed 6-digit code, which is unaffected by link expiry.
+otp_expiry = 3600
+
+# First code request from a brand-new user.
+[auth.email.template.confirmation]
+subject = "Welcome to Quests — your sign-in code"
+content_path = "./templates/confirmation.html"
+
+# Code request from a returning user.
+[auth.email.template.magic_link]
+subject = "Your Quests sign-in code"
+content_path = "./templates/magic_link.html"
