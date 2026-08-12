@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttonClass } from "./ui";
 import { WEEKDAYS, formatTimeRange } from "@/lib/schedule";
-import type { ScheduleSession, SessionQuest } from "@/lib/types";
+import type { Session, SessionQuest } from "@/lib/types";
 
 type SessionLite = Pick<
-  ScheduleSession,
-  "id" | "weekday" | "starts_at" | "ends_at"
+  Session,
+  "id" | "name" | "weekday" | "starts_at" | "ends_at"
 >;
 
 function dayShort(weekday: number) {
@@ -174,10 +174,13 @@ export default function AddToSchedule({
                 key={l.id}
                 className="flex items-center gap-2 rounded-2xl bg-[var(--brand-cyan-soft)] px-3 py-2 text-sm"
               >
-                <span className="font-semibold text-[var(--brand-cyan-ink)]">
-                  ✓ {s ? `${dayShort(s.weekday)} · ${formatTimeRange(s.starts_at, s.ends_at)}` : "Session"}
+                <span className="min-w-0 font-semibold text-[var(--brand-cyan-ink)]">
+                  ✓{" "}
+                  {s
+                    ? `${s.name} · ${dayShort(s.weekday)} ${formatTimeRange(s.starts_at, s.ends_at)}`
+                    : "Session"}
                 </span>
-                <span className="text-[var(--brand-cyan-ink)]/80">
+                <span className="shrink-0 text-[var(--brand-cyan-ink)]/80">
                   {l.recurrence === "weekly"
                     ? "every week"
                     : l.scheduled_date
@@ -260,11 +263,14 @@ export default function AddToSchedule({
                     >
                       {on ? "✓" : ""}
                     </span>
-                    <span className="font-semibold text-[var(--brand-purple-deep)]">
-                      {WEEKDAYS.find((d) => d.iso === s.weekday)?.long}
-                    </span>
-                    <span className="text-sm text-[var(--ink-soft)]">
-                      {formatTimeRange(s.starts_at, s.ends_at)}
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold text-[var(--brand-purple-deep)]">
+                        {s.name}
+                      </span>
+                      <span className="block text-sm text-[var(--ink-soft)]">
+                        {WEEKDAYS.find((d) => d.iso === s.weekday)?.long} ·{" "}
+                        {formatTimeRange(s.starts_at, s.ends_at)}
+                      </span>
                     </span>
                   </button>
                 );

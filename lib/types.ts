@@ -49,20 +49,31 @@ export interface Quest {
 
 export type Recurrence = "once" | "weekly";
 
-export interface ScheduleSession {
+/** Which funding stream a session counts towards, for a participant's mix. */
+export type SessionStream = "gaming" | "skill_development";
+
+/**
+ * A weekly NDIS session from the shared catalogue (`quests.sessions`). Staff
+ * assign participants to these in the staff app; the participant sees the ones
+ * assigned to them on their schedule. This is the same catalogue the staff-app
+ * NDIS view is built on.
+ */
+export interface Session {
   id: string;
-  participant_id: string;
+  name: string;
   weekday: number; // 1=Mon .. 7=Sun (ISO)
   starts_at: string; // "HH:MM:SS"
   ends_at: string; // "HH:MM:SS"
   has_support: boolean;
-  label: string | null;
+  ratio: string | null; // e.g. "1:2", or null for open/unspecified
+  stream: SessionStream;
   is_active: boolean;
 }
 
 export interface SessionQuest {
   id: string;
-  session_id: string;
+  participant_id: string;
+  session_id: string; // → quests.sessions
   quest_id: string;
   recurrence: Recurrence;
   scheduled_date: string | null; // set for once-off, null for weekly

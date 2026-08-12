@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import YesNoFlow from "@/components/YesNoFlow";
 import AddToSchedule from "@/components/AddToSchedule";
 import { Pill } from "@/components/ui";
-import type { Quest, ScheduleSession, SessionQuest } from "@/lib/types";
+import type { Quest, Session, SessionQuest } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -30,19 +30,22 @@ export default async function QuestDetail({
 
   const meta = CATEGORY_META[quest.category] ?? { emoji: "✨", color: "#3a1d6e" };
 
-  // The participant's sessions + any existing links for this quest, so they can
-  // plan the quest into their schedule (once-off or weekly).
-  const { data: sessionsData } = await supabase
-    .from("schedule_sessions")
-    .select("id, weekday, starts_at, ends_at")
-    .eq("participant_id", profile.id)
-    .eq("is_active", true)
-    .order("weekday")
-    .order("starts_at");
-  const sessions = (sessionsData as Pick<
-    ScheduleSession,
-    "id" | "weekday" | "starts_at" | "ends_at"
-  >[]) ?? [];
+  // The participant's assigned NDIS sessions + any existing links for this quest,
+  // so they can plan the quest into their schedule (once-off or weekly). RLS
+  // scopes session_customers to this participant.
+  type SessionLite = Pick<
+    Session,
+    "id" | "name" | "weekday" | "starts_at" | "ends_at" | "is_active"
+  >;
+  const { data: assignedData } = await supabase
+    .from("session_customers")
+    .select("session:sessions(id,name,weekday,starts_at,ends_at,is_active)");
+  const sessions = ((assignedData as { session: SessionLite | null }[] | null) ?? [])
+    .map((r) => r.session)
+    .filter((s): s is SessionLite => !!s && s.is_active)
+    .sort(
+      (a, b) => a.weekday - b.weekday || a.starts_at.localeCompare(b.starts_at),
+    );
 
   let scheduleLinks: Pick<
     SessionQuest,

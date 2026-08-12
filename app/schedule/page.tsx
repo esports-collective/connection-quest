@@ -4,11 +4,19 @@ import { getSessionProfile } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { STAFF_APP_URL } from "@/lib/constants";
 import { CATEGORY_META } from "@/lib/gamification";
-import { WEEKDAYS, weekdayLong, formatTimeRange } from "@/lib/schedule";
+import {
+  WEEKDAYS,
+  weekdayLong,
+  formatTimeRange,
+  streamMix,
+  formatHours,
+  STREAM_LABELS,
+  STREAM_COLOR,
+} from "@/lib/schedule";
 import TopBar from "@/components/TopBar";
 import Footer from "@/components/Footer";
 import { Card, Pill } from "@/components/ui";
-import type { Quest, ScheduleSession, SessionQuest } from "@/lib/types";
+import type { Quest, Session, SessionQuest } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +25,9 @@ type QuestLite = Pick<
   "id" | "title" | "category" | "difficulty" | "xp" | "est_minutes"
 >;
 
+// A session-customers row with its catalogue session embedded.
+type AssignedRow = { session: Session | null };
+
 export default async function SchedulePage() {
   const profile = await getSessionProfile();
   if (!profile) redirect("/login");
@@ -24,17 +35,19 @@ export default async function SchedulePage() {
 
   const supabase = await createClient();
 
-  // Sessions for this participant (RLS already scopes to them).
-  const { data: sessionsData } = await supabase
-    .from("schedule_sessions")
-    .select("*")
-    .eq("is_active", true)
-    .order("weekday")
-    .order("starts_at");
-  const sessions = (sessionsData as ScheduleSession[]) ?? [];
+  // The NDIS sessions staff have assigned this participant, from the shared
+  // catalogue. RLS (session_customers_select_own) already scopes this to them.
+  const { data: assignedData } = await supabase
+    .from("session_customers")
+    .select(
+      "session:sessions(id,name,weekday,starts_at,ends_at,has_support,ratio,stream,is_active)",
+    );
+  const sessions = ((assignedData as AssignedRow[] | null) ?? [])
+    .map((r) => r.session)
+    .filter((s): s is Session => !!s && s.is_active)
+    .sort((a, b) => a.weekday - b.weekday || a.starts_at.localeCompare(b.starts_at));
 
-  // Quests attached to those sessions, plus the quest details, in two small
-  // follow-up queries (kept simple rather than relying on nested embedding).
+  // Quests this participant has attached to those sessions, plus quest details.
   const sessionIds = sessions.map((s) => s.id);
   let links: SessionQuest[] = [];
   if (sessionIds.length) {
@@ -67,6 +80,10 @@ export default async function SchedulePage() {
     linksBySession.set(l.session_id, arr);
   }
 
+  // Weekly totals + the Gaming vs Skill development split — the same figures the
+  // support team sees on this participant's NDIS profile in the staff app.
+  const mix = streamMix(sessions);
+
   // Group sessions under their weekday, in Mon→Sun order.
   const days = WEEKDAYS.map((d) => ({
     ...d,
@@ -89,8 +106,8 @@ export default async function SchedulePage() {
             My Schedule
           </h1>
           <p className="mt-2 max-w-md text-white/75">
-            The sessions your support team has set up for you — and the quests
-            planned for them.
+            The NDIS sessions your support team has you in — and the quests
+            you&apos;ve planned for them.
           </p>
         </div>
       </div>
@@ -114,6 +131,55 @@ export default async function SchedulePage() {
           </Card>
         ) : (
           <div className="space-y-7">
+            {/* Weekly hours + stream mix — mirrors the staff-app NDIS profile. */}
+            <Card>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="kicker">Total hours / week</span>
+                <span className="font-display text-3xl font-black text-[var(--brand-purple-deep)]">
+                  {formatHours(mix.totalHours)}
+                </span>
+              </div>
+              <div className="mt-3 flex h-2.5 overflow-hidden rounded-full bg-[var(--brand-purple-soft)]">
+                <span
+                  style={{
+                    width: `${mix.gamingPct}%`,
+                    backgroundColor: STREAM_COLOR.gaming,
+                  }}
+                  aria-hidden
+                />
+                <span
+                  style={{
+                    width: `${mix.skillPct}%`,
+                    backgroundColor: STREAM_COLOR.skill_development,
+                  }}
+                  aria-hidden
+                />
+              </div>
+              <div className="mt-3 grid gap-1.5 text-sm">
+                {(["gaming", "skill_development"] as const).map((stream) => (
+                  <div
+                    key={stream}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <span className="flex items-center gap-2 font-semibold text-[var(--brand-purple-deep)]">
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: STREAM_COLOR[stream] }}
+                        aria-hidden
+                      />
+                      {STREAM_LABELS[stream]}
+                    </span>
+                    <span className="text-[var(--ink-soft)]">
+                      {stream === "gaming" ? mix.gamingPct : mix.skillPct}% ·{" "}
+                      {formatHours(
+                        stream === "gaming" ? mix.gamingHours : mix.skillHours,
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
             {days.map((day) => (
               <section key={day.iso}>
                 <h2 className="mb-3 font-display text-xl font-extrabold text-white">
@@ -124,16 +190,28 @@ export default async function SchedulePage() {
                     const questLinks = linksBySession.get(s.id) ?? [];
                     return (
                       <Card key={s.id}>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-display text-lg font-bold text-[var(--brand-purple-deep)]">
-                            {formatTimeRange(s.starts_at, s.ends_at)}
-                          </span>
-                          {s.has_support ? (
-                            <Pill color="#0f97a4">🤝 Support worker</Pill>
-                          ) : (
-                            <Pill>On your own</Pill>
-                          )}
-                          {s.label && <Pill>{s.label}</Pill>}
+                        <div className="flex items-start gap-3">
+                          <span
+                            className="mt-1.5 inline-block h-3 w-3 shrink-0 rounded-full"
+                            style={{ backgroundColor: STREAM_COLOR[s.stream] }}
+                            aria-hidden
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-display text-lg font-bold leading-tight text-[var(--brand-purple-deep)]">
+                              {s.name}
+                            </p>
+                            <p className="mt-0.5 text-sm font-semibold text-[var(--ink-soft)]">
+                              {formatTimeRange(s.starts_at, s.ends_at)}
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {s.has_support ? (
+                                <Pill color="#0f97a4">🤝 Support worker</Pill>
+                              ) : (
+                                <Pill>On your own</Pill>
+                              )}
+                              {s.ratio && <Pill>{s.ratio}</Pill>}
+                            </div>
+                          </div>
                         </div>
 
                         {questLinks.length > 0 ? (

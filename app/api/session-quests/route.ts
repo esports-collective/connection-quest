@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import type { ScheduleSession } from "@/lib/types";
+import type { Session } from "@/lib/types";
 
 // This participant's links for one quest (used for optimistic UI refresh).
 export async function GET(req: Request) {
@@ -15,19 +15,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "questId required" }, { status: 400 });
   }
 
-  // Restrict to the participant's own sessions.
-  const { data: sessionsData } = await supabase
-    .from("schedule_sessions")
-    .select("id")
-    .eq("participant_id", user.id);
-  const ownSessionIds = (sessionsData ?? []).map((s) => s.id);
-  if (ownSessionIds.length === 0) return NextResponse.json({ links: [] });
-
+  // RLS (sq_select_own) scopes session_quests to this participant.
   const { data } = await supabase
     .from("session_quests")
     .select("id, session_id, recurrence, scheduled_date")
-    .eq("quest_id", questId)
-    .in("session_id", ownSessionIds);
+    .eq("quest_id", questId);
 
   return NextResponse.json({ links: data ?? [] });
 }
@@ -42,7 +34,7 @@ function nextDateForWeekday(weekday: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-// Attach a quest to one or more of the participant's own sessions.
+// Attach a quest to one or more of the participant's assigned NDIS sessions.
 export async function POST(req: Request) {
   const supabase = await createClient();
   const {
@@ -65,14 +57,19 @@ export async function POST(req: Request) {
     );
   }
 
-  // Only operate on sessions that belong to this participant (RLS also guards).
-  const { data: sessionsData } = await supabase
-    .from("schedule_sessions")
-    .select("id, weekday")
-    .in("id", sessionIds)
-    .eq("participant_id", user.id);
-  const sessions = (sessionsData as Pick<ScheduleSession, "id" | "weekday">[]) ?? [];
-  if (sessions.length === 0) {
+  // Only operate on sessions this participant is actually assigned to. RLS on
+  // session_customers already restricts this to their own assignment; joining
+  // the catalogue gives us the weekday for once-off scheduling.
+  type AssignedRow = { session: Pick<Session, "id" | "weekday"> | null };
+  const { data: assignedData } = await supabase
+    .from("session_customers")
+    .select("session:sessions(id,weekday)");
+  const assigned = new Map<string, number>();
+  for (const r of (assignedData as AssignedRow[] | null) ?? []) {
+    if (r.session) assigned.set(r.session.id, r.session.weekday);
+  }
+  const targets = sessionIds.filter((id) => assigned.has(id));
+  if (targets.length === 0) {
     return NextResponse.json({ error: "no matching sessions" }, { status: 400 });
   }
 
@@ -81,19 +78,19 @@ export async function POST(req: Request) {
     .from("session_quests")
     .select("session_id, recurrence, scheduled_date")
     .eq("quest_id", questId)
-    .in(
-      "session_id",
-      sessions.map((s) => s.id),
-    );
+    .in("session_id", targets);
   const existing = existingData ?? [];
 
-  const rows = sessions
-    .map((s) => ({
-      session_id: s.id,
+  const rows = targets
+    .map((sessionId) => ({
+      participant_id: user.id,
+      session_id: sessionId,
       quest_id: questId,
       recurrence,
       scheduled_date:
-        recurrence === "once" ? nextDateForWeekday(s.weekday) : null,
+        recurrence === "once"
+          ? nextDateForWeekday(assigned.get(sessionId)!)
+          : null,
       added_by: user.id,
     }))
     .filter(
@@ -135,8 +132,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "linkId required" }, { status: 400 });
   }
 
-  // RLS (sq_delete_own) ensures a participant can only delete links on their
-  // own sessions.
+  // RLS (sq_delete_own) ensures a participant can only delete their own links.
   const { error } = await supabase
     .from("session_quests")
     .delete()
