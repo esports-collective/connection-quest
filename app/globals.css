@@ -8,7 +8,7 @@
    #6c3fc5 violet        · primary CTA pill
    ─────────────────────────────────────────────────────────── */
 :root {
-  --background: #1c0f3e;   /* Deep purple app canvas */
+  --background: #faf8fd;   /* Light lavender main-content canvas */
   --surface: #ffffff;
   --foreground: #1e1140;   /* Ink — used inside light cards */
   --on-dark: #f2eefb;      /* Primary text on the dark canvas */
@@ -58,7 +58,7 @@
 
 body {
   background: var(--background);
-  color: var(--on-dark);
+  color: var(--ink);
   font-family: var(--font-barlow), system-ui, sans-serif;
   font-size: 1.0625rem; /* slightly larger base for readability */
   line-height: 1.55;

@@ -69,7 +69,7 @@ export default async function QuestDetail({
       <main className="mx-auto max-w-2xl px-4 py-6">
         <Link
           href="/"
-          className="mb-4 inline-block text-sm font-semibold text-[var(--brand-cyan)] hover:text-white"
+          className="mb-4 inline-block text-sm font-semibold text-[var(--brand-purple)] hover:underline"
         >
           ← All quests
         </Link>

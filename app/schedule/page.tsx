@@ -95,7 +95,7 @@ export default async function SchedulePage() {
       <TopBar displayName={profile.display_name} role={profile.role} />
 
       {/* Hero */}
-      <div className="brand-gradient relative overflow-hidden text-white">
+      <div className="relative overflow-hidden bg-[var(--brand-purple)] text-white">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--brand-cyan)]/15 blur-3xl"
@@ -182,7 +182,7 @@ export default async function SchedulePage() {
 
             {days.map((day) => (
               <section key={day.iso}>
-                <h2 className="mb-3 font-display text-xl font-extrabold text-white">
+                <h2 className="mb-3 font-display text-xl font-extrabold text-[var(--brand-purple-deep)]">
                   {weekdayLong(day.iso)}
                 </h2>
                 <div className="space-y-3">

@@ -127,8 +127,8 @@ export function SectionTitle({
   return (
     <div className="mb-3 flex items-end justify-between gap-3">
       <div>
-        {kicker && <Kicker onDark>{kicker}</Kicker>}
-        <h2 className="mt-1 font-display text-xl font-extrabold text-white">
+        {kicker && <Kicker>{kicker}</Kicker>}
+        <h2 className="mt-1 font-display text-xl font-extrabold text-[var(--brand-purple-deep)]">
           {children}
         </h2>
       </div>

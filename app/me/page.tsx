@@ -91,7 +91,7 @@ export default async function MePage() {
                 className={`flex flex-col items-center rounded-2xl p-3 text-center ${
                   b.earned
                     ? "bg-white shadow-sm"
-                    : "bg-white/5 opacity-60 grayscale"
+                    : "bg-black/5 opacity-60 grayscale"
                 }`}
               >
                 <span className="text-3xl">{b.emoji}</span>
@@ -99,7 +99,7 @@ export default async function MePage() {
                   className={`mt-1 text-[11px] font-semibold leading-tight ${
                     b.earned
                       ? "text-[var(--brand-purple-deep)]"
-                      : "text-[var(--on-dark-soft)]"
+                      : "text-[var(--ink-soft)]"
                   }`}
                 >
                   {b.label}

@@ -57,7 +57,7 @@ export default async function Home() {
       <TopBar displayName={profile.display_name} role={profile.role} />
 
       {/* Hero */}
-      <div className="brand-gradient relative overflow-hidden text-white">
+      <div className="relative overflow-hidden bg-[var(--brand-purple)] text-white">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--brand-cyan)]/15 blur-3xl"
@@ -92,7 +92,7 @@ export default async function Home() {
         {/* Recommendations */}
         <section className="mb-8">
           <SectionTitle kicker="Picked for you">Quests for you</SectionTitle>
-          <p className="mb-4 -mt-2 text-sm text-[var(--on-dark-soft)]">
+          <p className="mb-4 -mt-2 text-sm text-[var(--ink-soft)]">
             Picked for you — but the whole library is yours to explore.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">

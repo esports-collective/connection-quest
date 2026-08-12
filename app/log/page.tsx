@@ -18,7 +18,7 @@ export default async function LogPage() {
       <TopBar displayName={profile.display_name} role={profile.role} />
       <main className="mx-auto max-w-2xl px-4 py-6">
         <SectionTitle>Log an activity</SectionTitle>
-        <p className="mb-4 -mt-2 text-sm text-[var(--on-dark-soft)]">
+        <p className="mb-4 -mt-2 text-sm text-[var(--ink-soft)]">
           Did something that isn&apos;t a quest yet? Log it here so it still
           counts.
         </p>

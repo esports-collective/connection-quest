@@ -51,7 +51,7 @@ export default async function LibraryPage({
       <TopBar displayName={profile.display_name} role={profile.role} />
 
       {/* Hero */}
-      <div className="brand-gradient relative overflow-hidden text-white">
+      <div className="relative overflow-hidden bg-[var(--brand-purple)] text-white">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--brand-cyan)]/15 blur-3xl"
@@ -87,7 +87,7 @@ export default async function LibraryPage({
           <>
             <Link
               href="/library"
-              className="mb-4 inline-block text-sm font-semibold text-[var(--brand-cyan)] hover:text-white"
+              className="mb-4 inline-block text-sm font-semibold text-[var(--brand-purple)] hover:underline"
             >
               ← All categories
             </Link>
@@ -103,7 +103,7 @@ export default async function LibraryPage({
                     className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
                       active
                         ? "bg-[var(--brand-cyan)] text-[var(--brand-purple-deep)]"
-                        : "bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
+                        : "bg-[var(--brand-purple-soft)] text-[var(--brand-purple-deep)] hover:brightness-95"
                     }`}
                   >
                     {cat}
