@@ -54,9 +54,10 @@ export default function TopBar({
         </div>
       </div>
 
-      {/* Row 2 — navigation + sign out (deep purple band) */}
+      {/* Row 2 — navigation + sign out (deep purple band). Active page marked by
+          a cyan underline, following app.esportscollective.com.au. */}
       <div className="bg-[var(--brand-purple-deep)]">
-        <nav className="mx-auto flex max-w-2xl items-center gap-1 px-4 py-2">
+        <nav className="mx-auto flex max-w-2xl items-center gap-1 px-4">
           {nav.map((n) => {
             const active =
               n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
@@ -64,19 +65,24 @@ export default function TopBar({
               <Link
                 key={n.href}
                 href={n.href}
-                className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-                  active
-                    ? "bg-[var(--brand-cyan)] text-[var(--brand-purple-deep)]"
-                    : "text-white/75 hover:bg-white/10 hover:text-white"
+                aria-current={active ? "page" : undefined}
+                className={`relative flex items-center px-3 pb-2.5 pt-2 text-[0.98rem] font-semibold tracking-[0.01em] transition ${
+                  active ? "text-white" : "text-white/70 hover:text-white"
                 }`}
               >
                 {n.label}
+                {active && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-3 bottom-0 h-[3px] rounded-full bg-[var(--brand-cyan)]"
+                  />
+                )}
               </Link>
             );
           })}
           <button
             onClick={signOut}
-            className="ml-auto rounded-full border border-white/25 px-3 py-1.5 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+            className="label-caps ml-auto my-1.5 rounded-full border-2 border-white/25 px-4 py-1.5 text-xs text-white/80 transition hover:border-[var(--brand-cyan)] hover:text-white"
           >
             Sign out
           </button>

@@ -113,7 +113,7 @@ export default async function Home() {
             </span>
             <div className="min-w-0 flex-1">
               <p className="kicker">Quest library</p>
-              <h3 className="mt-1 font-display text-lg font-bold text-[var(--brand-purple-deep)]">
+              <h3 className="mt-1 text-xl font-bold text-[var(--brand-purple-deep)]">
                 Explore all {quests.length} quests
               </h3>
               <p className="text-sm text-[var(--ink-soft)]">

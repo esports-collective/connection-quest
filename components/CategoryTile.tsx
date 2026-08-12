@@ -26,9 +26,7 @@ export default function CategoryTile({
       </span>
       <span className="text-4xl">{meta.emoji}</span>
       <div className="relative">
-        <h3 className="font-display text-lg font-extrabold leading-tight">
-          {category}
-        </h3>
+        <h3 className="text-xl font-bold leading-tight">{category}</h3>
         <p className="text-sm text-white/85">
           {count} quest{count === 1 ? "" : "s"}
         </p>

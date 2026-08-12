@@ -1,35 +1,43 @@
 @import "tailwindcss";
 
 /* ─── Side Quests · ESports Collective brand tokens ───────────
-   Palette mirrors esportscollective.com.au:
-   #3a1d6e brand purple  · hero, purple sections, final CTA
-   #2a1450 deep purple   · sticky header, mobile menu, footer
-   #19d3e0 cyan accent   · callouts, kicker tags, buttons
-   #6c3fc5 violet        · primary CTA pill
+   Palette + type mirror the ESports Collective POS/CRM app
+   (app.esportscollective.com.au), which in turn locks the
+   esc-web-core brand tokens. Same brand, participant-facing job:
+   light "sunken" canvas, white bordered cards, uppercase Archivo
+   titles, Barlow Condensed labels, cyan accent.
+
+   #3a1d6e brand purple  · hero / purple sections
+   #2a1450 deep purple   · sticky header
+   #19d3e0 cyan accent   · kickers, active nav, callouts
+   #6c3fc5 violet        · primary buttons
    ─────────────────────────────────────────────────────────── */
 :root {
-  --background: #faf8fd;   /* Light lavender main-content canvas */
+  --background: #faf8fd;   /* Sunken canvas behind cards */
   --surface: #ffffff;
-  --foreground: #1e1140;   /* Ink — used inside light cards */
+  --foreground: #1d1233;   /* Ink — used inside light cards */
   --on-dark: #f2eefb;      /* Primary text on the dark canvas */
   --on-dark-soft: #b9addb; /* Muted text on the dark canvas */
 
-  --brand-purple: #3a1d6e;      /* Hero / purple sections / CTA panel */
-  --brand-purple-deep: #2a1450; /* Header, footer, deep ink */
-  --brand-violet: #6c3fc5;      /* Primary CTA pill */
-  --brand-purple-soft: #ece5f9; /* Pale lavender fill */
+  --brand-purple: #3a1d6e;      /* Hero / purple sections */
+  --brand-purple-deep: #2a1450; /* Header, deep ink */
+  --brand-violet: #6c3fc5;      /* Primary button */
+  --brand-purple-soft: #f4f0fb; /* Pale lavender fill */
   --brand-cyan: #19d3e0;        /* Cyan accent / bolt */
   --brand-cyan-soft: #e0f8fb;   /* Pale cyan fill */
   --brand-cyan-ink: #0a5560;    /* Readable text on cyan-soft */
 
-  --ink: #1e1140;
-  --ink-soft: #6a5a89;
+  --ink: #1d1233;
+  --ink-soft: #5b5170;     /* Muted body text */
+  --line: #e7e0f3;         /* Hairline card border */
+  --lavender: #f4f0fb;     /* Empty-state / soft fill */
 
-  --good: #1f9d55;
-  --warn: #e0a100;
-  --danger: #d64545;
+  --good: #0f7a5a;
+  --warn: #b25c00;
+  --danger: #c02a4a;
 
-  --radius: 1.25rem;
+  --radius: 18px;
+  --radius-sm: 10px;
 }
 
 @theme inline {
@@ -46,12 +54,15 @@
   --color-cyan-ink: var(--brand-cyan-ink);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-lavender: var(--lavender);
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
 
   --font-display: var(--font-archivo);
   --font-sans: var(--font-barlow);
+  --font-condensed: var(--font-barlow-condensed);
 
   --radius-brand: var(--radius);
 }
@@ -60,13 +71,31 @@ body {
   background: var(--background);
   color: var(--ink);
   font-family: var(--font-barlow), system-ui, sans-serif;
-  font-size: 1.0625rem; /* slightly larger base for readability */
-  line-height: 1.55;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, .font-display {
+/* Page and section titles: uppercase Archivo, as on the POS app. */
+h1, h2 {
   font-family: var(--font-archivo), system-ui, sans-serif;
-  letter-spacing: -0.01em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+
+/* Card titles: Barlow Condensed, kept sentence case so quest names and
+   participant content stay easy to read. */
+h3, h4 {
+  font-family: var(--font-barlow-condensed), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+
+.font-display {
+  font-family: var(--font-archivo), system-ui, sans-serif;
 }
 
 /* Bigger, friendlier default tap targets */
@@ -78,16 +107,30 @@ button, a[role="button"] {
 :focus-visible {
   outline: 3px solid var(--brand-cyan);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@layer utilities {
+  /* Uppercase Barlow Condensed — the app's label voice (buttons, badges,
+     stat labels, kickers). */
+  .label-caps {
+    font-family: var(--font-barlow-condensed), system-ui, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 }
 
 /* ─── Brand surfaces ─────────────────────────────────────── */
 
-/* Brand card — always a light surface with dark ink, sits on the dark canvas */
+/* Brand card — white surface with a hairline border on the sunken canvas,
+   following the POS app (borders, not heavy drop-shadows). */
 .card {
   background: var(--surface);
   color: var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 1px 2px rgba(29, 18, 51, 0.04);
 }
 
 /* Deep purple → brand purple wash used on the header/footer/hero */
@@ -100,10 +143,10 @@ button, a[role="button"] {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-family: var(--font-barlow-condensed), system-ui, sans-serif;
   font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--brand-cyan-ink);
 }
@@ -121,6 +164,6 @@ button, a[role="button"] {
 .cyan-callout {
   background: var(--brand-cyan-soft);
   border: 1px solid color-mix(in srgb, var(--brand-cyan) 40%, transparent);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--brand-cyan-ink);
 }

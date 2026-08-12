@@ -40,7 +40,7 @@ export default function QuestCard({
           </div>
         </div>
 
-        <h3 className="mt-3 font-display text-lg font-bold leading-snug text-[var(--brand-purple-deep)]">
+        <h3 className="mt-3 text-xl font-bold leading-snug text-[var(--brand-purple-deep)]">
           {quest.title}
         </h3>
         <p className="mt-1 line-clamp-2 text-sm text-[var(--ink-soft)]">
