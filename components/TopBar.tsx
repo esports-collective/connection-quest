@@ -54,8 +54,8 @@ export default function TopBar({
         </div>
       </div>
 
-      {/* Row 2 — navigation + sign out (brand purple band) */}
-      <div className="bg-[var(--brand-purple)]">
+      {/* Row 2 — navigation + sign out (deep purple band) */}
+      <div className="bg-[var(--brand-purple-deep)]">
         <nav className="mx-auto flex max-w-2xl items-center gap-1 px-4 py-2">
           {nav.map((n) => {
             const active =
